@@ -121,7 +121,7 @@ class Application(Frame):
         self.spec_lo.set(value=spec_lo)
         self.link_times = IntVar(self.master)
         self.link_times.set(value=link_times)
-        self.paly_times = IntVar(self.master)
+        self.play_times = IntVar(self.master)
         self.play_times.set(value=play_times)
         self.result = StringVar(self.master)
         self.widgets()
@@ -168,7 +168,7 @@ class Application(Frame):
             en1 = Entry(F6,width = 8,textvariable = self.spec_lo )
             en2 = Entry(F6,width = 8,textvariable = self.spec_up)
             en3 = Entry(F6,width = 8,textvariable = self.link_times)
-            en4 = Entry(F6,width = 8,textvariable = self.paly_times)
+            en4 = Entry(F6,width = 8,textvariable = self.play_times)
             en3.place(x= 110,y = 145)
             en4.place(x= 300,y = 145)
             en1.place(x= 110,y = 110)
@@ -256,7 +256,7 @@ class Application(Frame):
         L4.place(x=0, y=0, relx=0.0, rely=1, relheight=1, relwidth=0.7, anchor='sw', bordermode='inside')
 
     def port_choose(self, master):
-        global link_times,spec_lo,spec_up
+        global link_times,spec_lo,spec_up,play_times
         spec_lo = self.spec_lo.get()
         spec_up = self.spec_up.get()
         link_times = self.link_times.get()
@@ -333,6 +333,7 @@ class Application(Frame):
                         break
                     else:
                         if i == link_times+3-1:
+                            self.play('fail')
                             self.sheet1.set(item='I001', column=4, value='FAIL')
                             results.append('FAIL')
                             self.result.set(value='FAIL')
@@ -363,6 +364,7 @@ class Application(Frame):
                     self.sheet1.set(item='I002', column=4, value='PASS')
                     results.append('PASS')
                 else:
+                    self.play('fail')
                     self.show_SN.insert('0.0', 'None')
                     self.sheet1.set(item='I002', column=4, value='FAIL')
                     results.append('FAIL')
@@ -382,6 +384,7 @@ class Application(Frame):
                     results.append('PASS')
                     results.append('PASS')
                 else:
+                    self.play('fail')
                     self.term.write('[sr]'.format(side).encode('utf-8'))
                     time.sleep(0.1)
                     self.sheet1.set(item='I003',column=4,value='FAIL')
@@ -425,6 +428,7 @@ class Application(Frame):
                     self.sheet1.set(item='I005', column=4, value='PASS')
                     results.append('PASS')
                 else:
+                    self.play('fail')
                     self.term.write('ft tunnel close'.format(side).encode('utf-8'))
                     time.sleep(0.5)
                     self.term.write('[sr]'.format(side).encode('utf-8'))
@@ -454,6 +458,7 @@ class Application(Frame):
                     self.sheet1.set(item='I006', column=4, value='PASS')
                     results.append('PASS')
                 else:
+                    self.play('fail')
                     self.sheet1.set(item='I006', column=4, value='FAIL')
                     results.append('FAIL')
                     self.result.set(value='FAIL')
@@ -481,6 +486,7 @@ class Application(Frame):
                 try:
                     Gcal =  int(value8[side8+19:side8+23])
                 except Exception:
+                    self.play('fail')
                     self.sheet1.set(item='I007', column=4, value='FAIL')
                     results.append('FAIL')
                     self.result.set(value='FAIL')
@@ -498,6 +504,7 @@ class Application(Frame):
                         self.sheet1.set(item='I007', column=4, value='PASS')
                         results.append('PASS')
                     else:
+                        self.play('fail')
                         self.sheet1.set(item='I007', column=4, value='FAIL')
                         results.append('FAIL')
                         self.result.set(value='FAIL')
@@ -521,6 +528,7 @@ class Application(Frame):
                     self.sheet1.set(item = 'I008',column= 4,value = 'PASS')
                     results.append('PASS')
                 else:
+                    self.play('fail')
                     self.sheet1.set(item='I008', column=4, value='FAIL')
                     results.append('FAIL')
                     self.result.set(value='FAIL')
@@ -532,11 +540,13 @@ class Application(Frame):
                 results.insert(0,SN[-13:-1])
                 results.append('PASS')
                 print(results)
+                self.play('pass')
                 self.result.set(value='PASS')
                 self.result_lab.config(bg = 'green')
                 self.go_but.config(state='normal')
                 write_log(SN[-13:-1], text, results)
             except Exception:
+                self.play('fail')
                 self.result.set(value='FAIL')
                 self.result_lab.config(bg='red')
                 self.go_but.config(state='normal')
@@ -546,15 +556,15 @@ class Application(Frame):
             self.result_lab.config(bg = 'red')
             self.go_but.config(state='normal')
 
-    def paly(self, value):
+    def play(self, value):
         if value == 'pass':
-            th1 = threading.Thread(target=self.paly1,args=('pass',) )
+            th1 = threading.Thread(target=self.play1,args=('pass',) )
             th1.start()
         elif value == 'fail':
-            th1 = threading.Thread(target=self.paly1,args=('fail',) )
+            th1 = threading.Thread(target=self.play1,args=('fail',) )
             th1.start()
 
-    def paly1(self, vau):
+    def play1(self, vau):
         for i in range(play_times):
             if vau == 'fail':
                 playsound(fail_file)
