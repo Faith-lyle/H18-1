@@ -1,0 +1,4 @@
+Golden Finger Test-1.0   版本，SR复位问题异常
+Golden Finger Test-1.3   版本，修复SR复位问题
+Golden Finger Test-1.5   修复SR复位问题，增加声音播放提示
+Golden Finger Test-2.0   增加PCM测试，CT时间10S，软件目录需要有file文件夹，里面需要有'pass.mp3'和'fail.mp3'两个音频文件
